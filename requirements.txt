@@ -1,0 +1,3 @@
+openai~=0.26.4
+discord~=2.1.0
+python-dotenv~=0.21.1
