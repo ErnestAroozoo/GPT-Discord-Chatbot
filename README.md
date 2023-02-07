@@ -1,2 +1,2 @@
 # GPT-Discord-Chatbot
-Discord chatbot powered by GPT-3
+A very simple chatbot powered by GPT-3
