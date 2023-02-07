@@ -1,4 +1,4 @@
-# Discord Chatbot using GPT-3
+# Discord Chatbot Using GPT-3
 
 This is a chatbot that utilizes OpenAI's GPT-3 to converse with users in Discord. By default, the chatbot takes on the persona of D.Va, a character from the popular game Overwatch.
 
