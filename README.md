@@ -23,5 +23,7 @@ The API keys for OpenAI, ElevenLabs and Discord are stored in a .env file in the
 
 ## Note
 It is important to install the FFmpeg library in the same directory as main.py in order for the voice chat function to work appropriately.
+
 To talk to the Discord chatbot in voice mode, simply tag the bot's username (e.g., @Bot).
+
 To talk to the Discord chatbot in text mode, simply tag the bot's username followed by the message (e.g., @Bot Hey, tell me more about yourself).
