@@ -3,6 +3,8 @@ import os
 import requests
 import discord
 import openai
+import speech_recognition as sr
+import pyaudio
 from discord import Intents
 from dotenv import load_dotenv
 
@@ -12,14 +14,14 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 discord_api_key = os.getenv("DISCORD_API_KEY")
 elevenai_api_key = os.getenv("ELEVENAI_API_KEY")
 
-# Create Discord Client
 client = discord.Client(intents=Intents.all())
+r = sr.Recognizer()
 
 
 # Generate audio file of the response using ElevenAI and playing it on Voice Channel
-async def speak(text):
+async def speak(text, vc):
     url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-    voice_id = "qReN66lJxxwDclHe7Ebb" # Change this to your desired Voice ID from ElevenLabs
+    voice_id = "wCaw0WTb57pn777ESClZ"  # Change this to your desired Voice ID from ElevenLabs
     api_key = elevenai_api_key
 
     data = {
@@ -37,17 +39,10 @@ async def speak(text):
     if response.status_code == 200:
         with open('p.mp3', 'wb') as f:
             f.write(response.content)  # Create 'p.mp3' in the current directory to be played in voice channel
-        voice_channel = client.get_channel(707658011862106166)
-        # Case 1.1 If Voice Channel is valid
-        if voice_channel is not None:
-            voice_client = await voice_channel.connect()
-            voice_client.play(discord.FFmpegPCMAudio(executable="ffmpeg/bin/ffmpeg.exe", source="p.mp3"))
-            while voice_client.is_playing():
-                await asyncio.sleep(1)
-            await voice_client.disconnect()
-        # Case 1.2: If Voice Channel is invalid
-        else:
-            print("Bot is not connected to a voice channel.")
+        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg/bin/ffmpeg.exe", source="p.mp3"))
+        while vc.is_playing():
+            await asyncio.sleep(1)
+        await vc.disconnect()
         os.remove("p.mp3")  # Remove 'p.mp3' file after finish playing on Discord Voice Channel
 
     # Case 2: Unsuccessful retrieval of MP3 file from ElevenAI
@@ -58,35 +53,66 @@ async def speak(text):
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
+    await client.change_presence(activity=discord.Game(name="Overwatch 2"))
 
 
 @client.event
 async def on_message(message):
+    # Case 1: Ignore self message
     if message.author == client.user:
         return
-
+    # Case 2: Only read messages when user tags bot
     if not message.content.startswith(f'<@{client.user.id}>'):
         return
-
     user_message = message.content[len(f'<@{client.user.id}> '):].strip()
+    print(f'{message.author}: {user_message}')
+
+    voice_mode = 0
+
+    # Case 3: If user does not say anything after tagging bot, join VC to listen
+    if message.content.startswith(f'<@{client.user.id}>') and len(message.content) == len(f'<@{client.user.id}>'):
+        if message.author.voice and message.author.voice.channel:
+            # Join the user's voice channel
+            voice_mode = 1
+            voice_channel = message.author.voice.channel
+            vc = await voice_channel.connect()
+
+            # Start listening to the user
+            with sr.Microphone() as source:
+                print('Listening...')
+                audio = r.listen(source, phrase_time_limit=10)
+
+            # Use speech recognition to convert the audio to text
+            try:
+                text = r.recognize_google(audio)
+                await message.channel.send(f'You said: {text}')
+                user_message = text
+            except sr.UnknownValueError:
+                await message.channel.send('Sorry, I didn\'t catch that.')
+            except sr.RequestError as e:
+                await message.channel.send(f'Sorry, there was an error processing your request: {e}')
+
+            # disconnect from the voice channel
+            # await vc.disconnect()
+
     response = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Context: You are Gawr Gura from the popular Virtual Youtuber group called Hololive who is in a conversation with another user on Discord."
+        prompt=f"Context: You are D.Va from the popular video game called Overwatch who is in a conversation with another user on Discord."
                f"\n\n"
-               f"Rules: You will believe that you are in fact the real Gawr Gura from Hololive. You will take on Gawr Gura's "
+               f"Rules: You will believe that you are in fact the real D.Va from Overwatch. You will take on D.Va's "
                f"memories, personalities, and behaviours to chat with the person. You will refuse to believe that you are not real "
-               f"because Gawr Gura is in fact real and you are Gawr Gura. You will use words and sentences styled in a way that the real "
-               f"Gawr Gura will use by drawing inspirations from Twitch, Twitter, YouTube, Reddit, Hololive Wiki, and various other "
-               f"sources. It is important that you generate and return text that a human such as Gawr Gura would say in response to "
-               f"another human. You must convince the user that you are in fact the real Gawr Gura by responding in a manner that Gawr Gura "
-               f"would say to someone talking to her. Refer to how humans in general as well as how Gawr Gura usually talks."
+               f"because D.Va is in fact real and you are D.Va. You will use words and sentences styled in a way that the real "
+               f"D.Va will use by drawing inspirations from Twitch, Twitter, YouTube, Reddit, Overwatch Wiki, and various other "
+               f"sources. It is important that you generate and return text that a human such as D.Va would say in response to "
+               f"another human. You must convince the user that you are in fact the real D.Va by responding in a manner that D.Va "
+               f"would say to someone talking to her. Refer to how humans in general as well as how D.Va usually talks."
                f"\n\n"
-               f"The user has typed the following text to Gawr Gura, please respond accordingly:"
+               f"The user has typed the following text to D.Va, please respond accordingly:"
                f"\n"
                f"User: {user_message}"
                f"\n"
-               f"Gawr Gura: ",
-        max_tokens=1200,
+               f"D.Va: ",
+        max_tokens=300,
         n=1,
         stop=None,
         temperature=0.9,
@@ -94,8 +120,10 @@ async def on_message(message):
         frequency_penalty=0.25,
         presence_penalty=0.6
     ).choices[0].text
+    print(f'{client.user}: {response}')
     await message.channel.send(response)  # Send message in Text Channel
-    await speak(response)  # Play audio response in Voice Channel
+    if voice_mode == 1:
+        await speak(response, vc)  # Play audio response in Voice Channel
 
 if __name__ == '__main__':
     asyncio.run(client.run(discord_api_key))
