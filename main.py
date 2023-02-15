@@ -19,7 +19,7 @@ client = discord.Client(intents=Intents.all())
 # Generate audio file of the response using ElevenAI and playing it on Voice Channel
 async def speak(text):
     url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-    voice_id = "qReN66lJxxwDclHe7Ebb"
+    voice_id = "qReN66lJxxwDclHe7Ebb" # Change this to your desired Voice ID from ElevenLabs
     api_key = elevenai_api_key
 
     data = {
@@ -41,7 +41,7 @@ async def speak(text):
         # Case 1.1 If Voice Channel is valid
         if voice_channel is not None:
             voice_client = await voice_channel.connect()
-            voice_client.play(discord.FFmpegPCMAudio("p.mp3"))
+            voice_client.play(discord.FFmpegPCMAudio(executable="ffmpeg/bin/ffmpeg.exe", source="p.mp3"))
             while voice_client.is_playing():
                 await asyncio.sleep(1)
             await voice_client.disconnect()
