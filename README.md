@@ -22,6 +22,6 @@ This is a chatbot that utilizes OpenAI's GPT-3 and ElevenLabs API to converse wi
 The API keys for OpenAI, ElevenLabs and Discord are stored in a .env file in the root directory. The code uses the `os` and `dotenv` libraries to retrieve the API keys from the .env file.
 
 ## Note
-It is important to install the FFmpeg library in the same directory as main.py in order for the voice chat function to work appropriately. Also, make sure to change voice_channel to your desired Voice Channel ID in the code.
+It is important to install the FFmpeg library in the same directory as main.py in order for the voice chat function to work appropriately.
 To talk to the Discord chatbot in voice mode, simply tag the bot's username (e.g., @Bot).
 To talk to the Discord chatbot in text mode, simply tag the bot's username followed by the message (e.g., @Bot Hey, tell me more about yourself).
