@@ -1,6 +1,6 @@
-# Discord Chatbot Using GPT-3
+# Discord Chatbot Using OpenAI and ElevenLabs API
 
-This is a chatbot that utilizes OpenAI's GPT-3 to converse with users in Discord. By default, the chatbot takes on the persona of D.Va, a character from the popular game Overwatch.
+This is a chatbot that utilizes OpenAI's GPT-3 to converse with users in Discord. By default, the chatbot takes on the persona of Gawr Gura, a popular Virtual Youtuber.
 
 ## Requirements
 
@@ -19,4 +19,7 @@ This is a chatbot that utilizes OpenAI's GPT-3 to converse with users in Discord
 
 ## API Keys
 
-The API keys for OpenAI and Discord are stored in a .env file in the root directory. The code uses the `os` and `dotenv` libraries to retrieve the API keys from the .env file.
+The API keys for ElevenAI, OpenAI and Discord are stored in a .env file in the root directory. The code uses the `os` and `dotenv` libraries to retrieve the API keys from the .env file.
+
+## Note
+It is important to install the FFmpeg library in order for voice chat function to work appropriately. Also, make sure to change voice_channel to your desired Voice Channel ID in the code.
