@@ -7,6 +7,7 @@ import speech_recognition as sr
 import pyaudio
 from discord import Intents
 from dotenv import load_dotenv
+from discord.ext import commands
 
 # Load API Keys
 load_dotenv()
@@ -21,7 +22,7 @@ r = sr.Recognizer()
 # Generate audio file of the response using ElevenAI and playing it on Voice Channel
 async def speak(text, vc):
     url = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-    voice_id = "wCaw0WTb57pn777ESClZ"  # Change this to your desired Voice ID from ElevenLabs
+    voice_id = "RJf678FGSbHTKH3y62ai"  # Change this to your desired Voice ID from ElevenLabs
     api_key = elevenai_api_key
 
     data = {
@@ -64,20 +65,22 @@ async def on_message(message):
     # Case 2: Only read messages when user tags bot
     if not message.content.startswith(f'<@{client.user.id}>'):
         return
+
     user_message = message.content[len(f'<@{client.user.id}> '):].strip()
     print(f'{message.author}: {user_message}')
 
     voice_mode = 0
 
-    # Case 3: If user does not say anything after tagging bot, join VC to listen
+    # Case 3: If user does not say anything after tagging bot, join VC to listen (Note: Only listens locally for now)
     if message.content.startswith(f'<@{client.user.id}>') and len(message.content) == len(f'<@{client.user.id}>'):
         if message.author.voice and message.author.voice.channel:
             # Join the user's voice channel
             voice_mode = 1
             voice_channel = message.author.voice.channel
             vc = await voice_channel.connect()
+            print(f'Connected to {vc.channel}')
 
-            # Start listening to the user
+            # Start listening to the user (Note: Only listens locally for now)
             with sr.Microphone() as source:
                 print('Listening...')
                 audio = r.listen(source, phrase_time_limit=10)
@@ -85,15 +88,14 @@ async def on_message(message):
             # Use speech recognition to convert the audio to text
             try:
                 text = r.recognize_google(audio)
-                await message.channel.send(f'You said: {text}')
                 user_message = text
+                await message.channel.send(f'You said: {text}')
             except sr.UnknownValueError:
-                await message.channel.send('Sorry, I didn\'t catch that.')
+                print("Sorry, I didn't catch that.")
+                await vc.disconnect()
             except sr.RequestError as e:
-                await message.channel.send(f'Sorry, there was an error processing your request: {e}')
-
-            # disconnect from the voice channel
-            # await vc.disconnect()
+                print(f'Sorry, there was an error processing your request: {e}')
+                await vc.disconnect()
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -109,9 +111,9 @@ async def on_message(message):
                f"\n\n"
                f"The user has typed the following text to D.Va, please respond accordingly:"
                f"\n"
-               f"User: {user_message}"
+               f"{message.author}: {user_message}"
                f"\n"
-               f"D.Va: ",
+               f"{client.user}: ",
         max_tokens=300,
         n=1,
         stop=None,
