@@ -1,6 +1,8 @@
-# Discord Voice Assistant
+# GPT Discord Chatbot
 
 This is a Discord chatbot written in Python. It can generate audio responses using the ElevenLabs text-to-speech API and respond to user messages using OpenAI's GPT-3 language model. It also has the ability to listen to a user's speech and convert it to text using the SpeechRecognition library. By default, the chatbot takes on the persona of Walter White, a character from Breaking Bad.
+
+![](https://github.com/ErnestAroozoo/GPT-Discord-Chatbot/blob/main/tutorial.png)
 
 ## Requirements
 
