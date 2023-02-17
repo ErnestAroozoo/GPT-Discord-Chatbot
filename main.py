@@ -132,7 +132,7 @@ async def on_message(message):
                f"Memory:\n"
                f"{memory}"
                f"\n\n"
-               f"The user has typed the following text to Pokimane, please respond accordingly:\n"
+               f"The user has typed the following text to Walter White, please respond accordingly:\n"
                f"{message.author}: {user_message}"
                f"\n"
                f"{client.user}: ",
