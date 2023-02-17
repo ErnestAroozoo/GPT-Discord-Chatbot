@@ -1,6 +1,6 @@
-# Discord Chatbot Using OpenAI and ElevenLabs API
+# GPT-Discord-Chatbot
 
-This is a chatbot that utilizes OpenAI's GPT-3 and ElevenLabs API to converse with users in Discord. By default, the chatbot takes on the persona of Walter White, a popular character from Breaking Bad.
+This is a chatbot that utilizes OpenAI's GPT-3 and ElevenLabs API to converse with users through text and voice on Discord. By default, the chatbot takes on the persona of Walter White, a popular character from Breaking Bad.
 
 ## Requirements
 
