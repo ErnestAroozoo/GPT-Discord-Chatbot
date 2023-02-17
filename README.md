@@ -16,7 +16,7 @@ This program requires Python 3.8 or later, as well as several Python libraries i
 - speech_recognition
 - pyaudio
 
-Additionally, you will need to obtain API keys from ElevenAI and Discord to use this program.
+Additionally, you will need to obtain API keys from OpenAI, ElevenLabs, and Discord to use this.
 
 ## Usage
 
@@ -31,6 +31,7 @@ Additionally, you will need to obtain API keys from ElevenAI and Discord to use 
 - Listens to a user's speech and converts it to text using the SpeechRecognition library.
 - Generates audio responses using the ElevenLabs text-to-speech API.
 - Plays generated audio responses in a Discord voice channel.
+- Remembers the context by saving conversations in a file called memory.txt
 
 ## Configuration
 
@@ -44,5 +45,5 @@ This program uses a `.env` file to store configuration settings. The following e
 
 ## Note
 
-The chatbot listens locally for voices for now.
+- The chatbot listens locally for voice input at the moment since the default Discord.py library does not officially support voice input from voice channels at this time.
 
