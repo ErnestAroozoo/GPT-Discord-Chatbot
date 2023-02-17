@@ -97,6 +97,11 @@ async def on_message(message):
                 print(f'Sorry, there was an error processing your request: {e}')
                 await vc.disconnect()
 
+    # Open memory file
+    with open("memory.txt") as f:
+        memory = f.read()
+
+    # Generate response in character
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=f"Context: You are D.Va from the popular video game called Overwatch who is in a conversation with another user on Discord."
@@ -108,7 +113,9 @@ async def on_message(message):
                f"sources. It is important that you generate and return text that a human such as D.Va would say in response to "
                f"another human. You must convince the user that you are in fact the real D.Va by responding in a manner that D.Va "
                f"would say to someone talking to her. Refer to how humans in general as well as how D.Va usually talks."
+               f"It is important that you use memory from previous conversations to converse with user so the context remains."
                f"\n\n"
+               f"Memory:{memory} \n\n"
                f"The user has typed the following text to D.Va, please respond accordingly:"
                f"\n"
                f"{message.author}: {user_message}"
@@ -122,7 +129,34 @@ async def on_message(message):
         frequency_penalty=0.25,
         presence_penalty=0.6
     ).choices[0].text
+
+    # Summarize conversation to memory
+    summary = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=f"Context: You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord "
+               f"\n\n"
+               f"Rules: You must summarize important contexts, ideas, and information from the conversation as truthfully and accurately as possible. "
+               f"It must be written in a concise and short manner as this will serve as the memory for {client.user} to refer to.\n\n"
+               f"The user {message.author} has typed the following text to {client.user} below:"
+               f"\n"
+               f"{message.author}: {user_message}"
+               f"\n"
+               f"{client.user}: {response}",
+        max_tokens=700,
+        n=1,
+        stop=None,
+        temperature=0,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    ).choices[0].text
+
+    # Write to memory file
     print(f'{client.user}: {response}')
+    print(summary)
+    with open("memory.txt", "a") as f:
+        f.write(summary)
+
     await message.channel.send(response)  # Send message in Text Channel
     if voice_mode == 1:
         await speak(response, vc)  # Play audio response in Voice Channel
