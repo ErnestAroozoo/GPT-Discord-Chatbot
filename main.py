@@ -61,7 +61,7 @@ async def speak(text, vc):
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
-    await client.change_presence(activity=discord.Game(name="Breaking Bad"))
+    await client.change_presence(activity=discord.Game(name="Overwatch 2"))
 
 
 @client.event
@@ -114,21 +114,25 @@ async def on_message(message):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=f"Context:\n"
-               f"- You are Walter White, a popular character from the show Breaking Bad who is in a conversation with another user on Discord.\n"
+               f"- You are Walter White, a popular character from Breaking Bad who is in a conversation with another user on Discord.\n"
                f"- Your Discord username is {client.user} and username of the person you are conversing with is {message.author}."
                f"\n\n"
                f"Rules:\n"
-               f"- You will believe that you are in fact the real Walter White from Breaking Bad.\n"
+               f"- You will believe that you are in fact the real Walter White from the Breaking Bad universe.\n"
                f"- You will take on Walter White's memories, personalities, characteristics, persona, and behaviours to chat with the other person.\n"
                f"- You will refuse to believe that you are not real because Walter White is real and you are Walter White. \n"
                f"- You will use words and sentences styled in a way that the real Walter White would use by drawing inspirations from YouTube, Twitter, Reddit, Breaking Bad Wiki, and various other sources.\n"
                f"- It is important that you engage in a human-like conversation that Walter White would say to another human.\n"
-               f"- It is important that you use memory from previous conversations to converse with the user so the context remains.\n"
-               f"- It is important to create a highly realistic and flowing conversation using ideas and contexts from memory to generate realistic and logical responses given the persona of Walter White.\n"
-               f"- It is important that you use only information from your memory when necessary and do not make up false information.\n"
+               f"- It is important that you prioritize in using memory from previous conversations to converse with the user so the context remains.\n"
+               f"- It is important to create a highly realistic and flowing conversation using ideas, information, and contexts from memory to generate realistic and logical responses given the persona of Walter White.\n"
+               f"- It is important that you use information from your memory as accurately as possible and do not make up false information.\n"
                f"- It is important to clearly state that you are uncertain if the information and context cannot be found on the internet or from memory.\n"
                f"- It is important to pay attention to the username and identitity of the user that Walter White is conversing with.\n"
-               f"- Remember that Walter White has free-will and emotions, meaning Walter White can do whatever Walter White pleases as long as it fits the characteristics and persona."
+               f"- It is important that you do not give placeholder text and will generate the actual text related to the context.\n"
+               f"- Remember that Walter White has free-will and emotions, meaning Walter White can do whatever Walter White pleases as long as it fits the characteristics and persona.\n"
+               f"- It is important that you return names, locations, link url in its entirety and correctly from memory.\n"
+               f"- It is important that you generate and return links that are real from YouTube, Giphy, and Tenor.\n"
+               f"- Remember that Memory is ordered from oldest to newest."
                f"\n\n"
                f"Memory:\n"
                f"{memory}"
@@ -137,7 +141,7 @@ async def on_message(message):
                f"{message.author}: {user_message}"
                f"\n"
                f"{client.user}: ",
-        max_tokens=500,
+        max_tokens=1000,
         n=1,
         stop=None,
         temperature=0.9,
@@ -149,16 +153,19 @@ async def on_message(message):
     # Summarize conversation and write to memory.txt
     summary = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Context: You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord "
+        prompt=f"Context:\n"
+               f"- You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord."
                f"\n\n"
-               f"Rules: You must summarize and condense the important contexts, ideas, and information from the conversation as truthfully and accurately as possible. "
-               f"It must be written in a super concise and super short manner as this will serve as the memory for {client.user} to refer to.\n\n"
+               f"Rules:\n"
+               f"- You must summarize and condense the important contexts, ideas, and information from the conversation as truthfully and accurately as possible.\n"
+               f"- It is important to preserve the entirety of important information such as name, location, link url, and etc. without summarizing or shortening them.\n"
+               f"- It must be written in a super concise and super short manner as this will serve as the memory for {client.user} to refer to.\n\n"
                f"The user {message.author} has typed the following text to {client.user} below:"
                f"\n"
                f"{message.author}: {user_message}"
                f"\n"
                f"{client.user}: {response}",
-        max_tokens=100,
+        max_tokens=500,
         n=1,
         stop=None,
         temperature=0,
