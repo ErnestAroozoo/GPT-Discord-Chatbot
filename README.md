@@ -48,4 +48,4 @@ This program uses a `.env` file to store configuration settings. The following e
 ## Note
 - The chatbot listens locally for voice input at the moment since the default Discord.py library does not officially support voice input from voice channels at this time.
 - To talk with the chatbot in text simply tag the bot followed by your message (e.g., @BotUsername Hello, it's nice to meet you)
-- To speak with the chatbot in voice simply join a Voice Channel then tag the bot (e.g., @BotUsername)
+- To speak with the chatbot in voice simply join a voice channel then tag the bot (e.g., @BotUsername)
