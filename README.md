@@ -2,6 +2,8 @@
 
 This is a Discord chatbot written in Python. It can generate audio responses using the ElevenLabs text-to-speech API and respond to user messages using OpenAI's GPT-3 language model. It also has the ability to listen to a user's speech and convert it to text using the SpeechRecognition library. By default, the chatbot takes on the persona of Walter White, a character from Breaking Bad.
 
+Video Demo: https://youtu.be/thluGMId-dw
+
 ![](https://github.com/ErnestAroozoo/GPT-Discord-Chatbot/blob/main/tutorial.png)
 
 ## Requirements
@@ -44,6 +46,6 @@ This program uses a `.env` file to store configuration settings. The following e
 - `FFMPEG_PATH`: The path to your FFMPEG executable.
 
 ## Note
-
 - The chatbot listens locally for voice input at the moment since the default Discord.py library does not officially support voice input from voice channels at this time.
-
+- To talk with the chatbot in text simply tag the bot followed by your message (e.g., @BotUsername Hello, it's nice to meet you)
+- To speak with the chatbot in voice simply join a Voice Channel then tag the bot (e.g., @BotUsername)
