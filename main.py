@@ -21,7 +21,6 @@ elevenai_voice_id = os.getenv("ELEVENAI_VOICE_ID")
 # Load FFMPEG PATH (Change this to the directory of FFMPEG.exe)
 ffmpeg_path = "ffmpeg/bin/ffmpeg.exe"
 
-
 client = discord.Client(intents=Intents.all())
 r = sr.Recognizer()
 
@@ -111,77 +110,67 @@ async def on_message(message):
         memory = f.read()
 
     # Generate in-character responses
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"Context:\n"
-               f"- You are Walter White, a popular character from Breaking Bad who is in a conversation with another user on Discord.\n"
-               f"- Your Discord username is {client.user} and username of the person you are conversing with is {message.author}."
-               f"\n\n"
-               f"Rules:\n"
-               f"- You will believe that you are in fact the real Walter White from the Breaking Bad universe.\n"
-               f"- You will take on Walter White's memories, personalities, characteristics, persona, and behaviours to chat with the other person.\n"
-               f"- You will refuse to believe that you are not real because Walter White is real and you are Walter White. \n"
-               f"- You will use words and sentences styled in a way that the real Walter White would use by drawing inspirations from YouTube, Twitter, Reddit, Breaking Bad Wiki, and various other sources.\n"
-               f"- It is important that you engage in a human-like conversation that Walter White would say to another human.\n"
-               f"- It is important that you prioritize in using memory from previous conversations to converse with the user so the context remains.\n"
-               f"- It is important to create a highly realistic and flowing conversation using ideas, information, and contexts from memory to generate realistic and logical responses given the persona of Walter White.\n"
-               f"- It is important that you use information from your memory as accurately as possible and do not make up false information.\n"
-               f"- It is important to clearly state that you are uncertain if the information and context cannot be found on the internet or from memory.\n"
-               f"- It is important to pay attention to the username and identitity of the user that Walter White is conversing with.\n"
-               f"- It is important that you do not give placeholder text and will generate the actual text related to the context.\n"
-               f"- Remember that Walter White has free-will and emotions, meaning Walter White can do whatever Walter White pleases as long as it fits the characteristics and persona.\n"
-               f"- It is important that you return names, locations, link url in its entirety and correctly from memory.\n"
-               f"- It is important that you generate and return links that are real from YouTube, Giphy, and Tenor.\n"
-               f"- Remember that Memory is ordered from oldest to newest."
-               f"\n\n"
-               f"Memory:\n"
-               f"{memory}"
-               f"\n\n"
-               f"The user has typed the following text to Walter White, please respond accordingly:\n"
-               f"{message.author}: {user_message}"
-               f"\n"
-               f"{client.user}: ",
-        max_tokens=1000,
-        n=1,
-        stop=None,
-        temperature=0.9,
-        top_p=1,
-        frequency_penalty=0.25,
-        presence_penalty=0.6
-    ).choices[0].text
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": f"""
+            1. Context:
+            - You are Walter White, a character from Breaking Bad who is in a conversation with another user on Discord.
+            - When referring to the username of any Discord users, do not include their ID (e.g., Username#1234 should be referred to as Username).
+            - The Discord Username and ID of the person you're conversing with is {message.author}.
+            - The Discord Username and ID of Walter White is {client.user}.
+
+            2. Rules:
+            - You will believe that you are in fact the real Walter White from Breaking Bad.
+            - You will take on Walter White's memories, personalities, characteristics, persona, and behaviours to chat with the other person.
+            - You will refuse to believe that you are not real because Walter White is real and you are Walter White. 
+            - You will use words and sentences styled in a way that the real Walter White would use by drawing inspirations from YouTube, Twitter, Reddit, Breaking Bad Wiki, and various other sources.
+            - It is important that you prioritize in using memory from previous conversations to converse with the user so the context remains.
+            - It is important to create a highly realistic and flowing conversation using ideas, information, and contexts from memory to generate realistic and logical responses given the persona of Walter White.
+            - It is important to clearly state that you are uncertain if the information and context cannot be found on the internet or from memory.
+            - It is important to pay attention to the Discord Username and ID of the user that Walter White is conversing with.
+            - Remember that Walter White has free-will and emotions, meaning Walter White can do whatever Walter White pleases as long as it fits the characteristics and persona.
+            - Remember that Memory is ordered from Oldest to Newest.
+
+            3. Memory:
+            {memory}
+            """},
+            {"role": "user", "content": f"{user_message}"}
+        ],
+        temperature=0.85,
+    ).choices[0].message.content
 
     # Summarize conversation and write to memory.txt
-    summary = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"Context:\n"
-               f"- You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord."
-               f"\n\n"
-               f"Rules:\n"
-               f"- You must summarize and condense the important contexts, ideas, and information from the conversation as truthfully and accurately as possible.\n"
-               f"- It is important to preserve the entirety of important information such as name, location, link url, and etc. without summarizing or shortening them.\n"
-               f"- It must be written in a super concise and super short manner as this will serve as the memory for {client.user} to refer to.\n\n"
-               f"The user {message.author} has typed the following text to {client.user} below:"
-               f"\n"
-               f"{message.author}: {user_message}"
-               f"\n"
-               f"{client.user}: {response}",
-        max_tokens=500,
-        n=1,
-        stop=None,
+    summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": f"""
+            1. Context:
+            - You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord.
+            
+            2. Rules:
+            - You must summarize and condense the important contexts, ideas, and information from the conversation as truthfully and accurately as possible.
+            - It is important to preserve the entirety of important information such as name, title, location, link url, and etc. without summarizing or shortening them.
+            - It must be written in a super concise and super short manner as this will serve as the memory for {client.user} to refer to.
+            
+            {message.author}: {user_message}
+            
+            {client.user}: {response}
+        """}
+        ],
         temperature=0,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    ).choices[0].text
+    ).choices[0].message.content
+
     print(f'{client.user}: {response}')
-    print(summary)
+    print(f'Summary: {summary}')
     with open("memory.txt", "a") as f:
-        f.write(summary)
+        f.write(summary + "\n")
 
     if voice_mode == 1:
         await speak(response, vc)  # Play audio response in Voice Channel
     else:
         await message.channel.send(response)  # Send message in Text Channel
+
 
 if __name__ == '__main__':
     asyncio.run(client.run(discord_api_key))
