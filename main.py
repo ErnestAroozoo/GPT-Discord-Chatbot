@@ -147,14 +147,14 @@ async def on_message(message):
             {"role": "system", "content": f"""
             1. Context:
             - You are responsible for summarizing the conversations between {client.user} and {message.author} on Discord.
-            
+
             2. Rules:
             - You must summarize and condense the important contexts, ideas, and information from the conversation as truthfully and accurately as possible.
             - It is important to preserve the entirety of important information such as name, title, location, link url, and etc. without summarizing or shortening them.
             - It must be written in a super concise and super short manner as this will serve as the memory for {client.user} to refer to.
-            
+
             {message.author}: {user_message}
-            
+
             {client.user}: {response}
         """}
         ],
