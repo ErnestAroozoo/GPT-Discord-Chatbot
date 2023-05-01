@@ -4,7 +4,7 @@ This is a Discord chatbot written in Python. It can generate audio responses usi
 
 Video Demo: https://youtu.be/thluGMId-dw
 
-![](https://github.com/ErnestAroozoo/GPT-Discord-Chatbot/blob/main/tutorial.png)
+![](https://github.com/ErnestAroozoo/GPT-Discord-Chatbot/blob/main/screenshot.png)
 
 ## Requirements
 
