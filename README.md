@@ -1,6 +1,6 @@
 # GPT Discord Chatbot
 
-This is a Discord chatbot written in Python. It can generate audio responses using the ElevenLabs text-to-speech API and respond to user messages using OpenAI's GPT-3 language model. It also has the ability to listen to a user's speech and convert it to text using the SpeechRecognition library. By default, the chatbot takes on the persona of Gawr Gura, a Virtual Youtuber from Hololive.
+This is a Discord chatbot written in Python. It can generate audio responses using the ElevenLabs text-to-speech API and respond to user messages using OpenAI's GPT-3.5 language model. It also has the ability to listen to a user's speech and convert it to text using the SpeechRecognition library. By default, the chatbot takes on the persona of Gawr Gura, a Virtual Youtuber from Hololive.
 
 Video Demo: https://youtu.be/thluGMId-dw
 
@@ -28,11 +28,11 @@ Additionally, you will need to obtain API keys from OpenAI, ElevenLabs, and Disc
 
 ## Features
 
-- Responds to user messages using OpenAI's GPT-3 language model.
+- Responds to user messages using OpenAI's GPT-3.5 language model.
 - Listens to a user's speech and converts it to text using the SpeechRecognition library.
 - Generates audio responses using the ElevenLabs text-to-speech API.
 - Plays generated audio responses in a Discord voice channel.
-- Remembers the context by saving conversations in a file called memory.txt
+- Remembers the context by saving previous conversations in a list structure.
 
 ## Configuration
 
